@@ -14,4 +14,9 @@ class Page extends Model
         'hash_id',
         'user_id'
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

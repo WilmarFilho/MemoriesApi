@@ -18,11 +18,15 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
+        do {
+            $hash = Str::uuid();
+        } while (User::where('hash', $hash)->exists());
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'hash' => Str::uuid(), 
+            'hash' => $hash, 
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -43,9 +47,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['As credenciais estão incorretas.'],
-            ]);
+            return response()->json(['error' => 'Não autorizado.'], 401);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
