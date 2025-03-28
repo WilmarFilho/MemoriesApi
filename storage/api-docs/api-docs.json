@@ -13,19 +13,213 @@
     ],
     "paths": {
         "/api": {},
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Registra um novo usuário",
+                "description": "Cria um novo usuário e retorna um token de autenticação.",
+                "operationId": "8a56853624e025573120a09a4c75d468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "johndoe@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuário registrado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "token123"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Autentica um usuário",
+                "description": "Gera um token para um usuário autenticado.",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "johndoe@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuário autenticado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "token123"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Faz logout do usuário",
+                "description": "Revoga o token de autenticação do usuário.",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Logout realizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logout realizado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Obter usuário autenticado",
+                "description": "Retorna as informações do usuário autenticado.",
+                "operationId": "7c1cf647d76fad4b3eb1549fa4fe2f4c",
+                "responses": {
+                    "200": {
+                        "description": "Dados do usuário autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "John Doe"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "johndoe@example.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/pages/{hash}": {
             "get": {
                 "tags": [
                     "Pages"
                 ],
-                "summary": "Get list of pages by hash",
-                "description": "Retrieve all pages associated with a given hash_id",
+                "summary": "Lista de páginas a partir do hash do usuário",
+                "description": "Retorna todas as páginas do usuário com o hash_id",
                 "operationId": "411e4531cea9dfbd33ca3c07bf886825",
                 "parameters": [
                     {
                         "name": "hash",
                         "in": "path",
-                        "description": "Hash ID associated with the pages",
+                        "description": "Hash ID associado ao usuário",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -34,7 +228,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of pages",
+                        "description": "Lista das Páginas",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -57,13 +251,13 @@
                 "tags": [
                     "Pages"
                 ],
-                "summary": "Create a new page",
-                "description": "Store a new page with images and description",
+                "summary": "Cria uma nova página",
+                "description": "Salva uma nova página do usuário",
                 "operationId": "ebdecb4dc27cc332514eb6bd5986c5d8",
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "img_01",
@@ -96,7 +290,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Page created successfully",
+                        "description": "Página criada com sucesso",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -123,7 +317,7 @@
                                         },
                                         "hash_id": {
                                             "type": "string",
-                                            "example": "some_hash"
+                                            "example": "4243242erwr"
                                         }
                                     },
                                     "type": "object"
@@ -137,24 +331,24 @@
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             }
         },
         "/api/page/{id}": {
-            "put": {
+            "post": {
                 "tags": [
                     "Pages"
                 ],
-                "summary": "Update a page",
-                "description": "Update an existing page by ID",
-                "operationId": "305ebd230bd68edf12e5704d3e34fcdc",
+                "summary": "Atualiza a página",
+                "description": "Atualiza uma página com o id",
+                "operationId": "d06105b72d538ac5e377908a971e2b63",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the page to be updated",
+                        "description": "ID da página a ser atualizada",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -164,7 +358,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "img_01",
@@ -187,7 +381,7 @@
                                     },
                                     "descricao": {
                                         "type": "string",
-                                        "example": "Updated description"
+                                        "example": "Nesse fizemos nossa primeira ..."
                                     }
                                 },
                                 "type": "object"
@@ -197,14 +391,14 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Page updated successfully",
+                        "description": "Página atualizada com sucesso",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Page updated successfully"
+                                            "example": "Página atualizada com sucesso"
                                         },
                                         "path01": {
                                             "type": "string",
@@ -224,7 +418,7 @@
                                         },
                                         "hash_id": {
                                             "type": "string",
-                                            "example": "some_hash"
+                                            "example": "42523425234"
                                         }
                                     },
                                     "type": "object"
@@ -238,24 +432,22 @@
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
-            }
-        },
-        "/page/{id}": {
+            },
             "delete": {
                 "tags": [
                     "Pages"
                 ],
-                "summary": "Delete a page",
-                "description": "Delete an existing page by ID",
-                "operationId": "4ce5d18580e6f96a806dc755bf4f8a75",
+                "summary": "Deleta página",
+                "description": "Deleta página a partir do id",
+                "operationId": "11aa7194b4958c886f5a0baf34b02659",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the page to be deleted",
+                        "description": "ID da página para ser deletada",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -264,14 +456,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Page deleted successfully",
+                        "description": "Página deletada com sucesso",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Page deleted successfully"
+                                            "example": "Página deletada com sucesso"
                                         }
                                     },
                                     "type": "object"
@@ -285,7 +477,7 @@
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             }
@@ -351,12 +543,29 @@
                 },
                 "type": "object"
             }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "apiKey",
+                "description": "Use o formato Bearer <token>",
+                "name": "Authorization",
+                "in": "header"
+            }
         }
     },
     "tags": [
         {
             "name": "Pages",
-            "description": "Endpoints for managing pages"
+            "description": "Páginas"
+        },
+        {
+            "name": "Autenticação",
+            "description": "Autenticação"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
         }
     ]
 }

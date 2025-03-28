@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 /**
  * @OA\Tag(
  *     name="Pages",
- *     description="Endpoints for managing pages"
+ *     description="Páginas"
  * )
  */
 class PageController extends Controller
@@ -19,18 +19,18 @@ class PageController extends Controller
      * @OA\Get(
      *     path="/api/pages/{hash}",
      *     tags={"Pages"},
-     *     summary="Get list of pages by hash",
-     *     description="Retrieve all pages associated with a given hash_id",
+     *     summary="Lista de páginas a partir do hash do usuário",
+     *     description="Retorna todas as páginas do usuário com o hash_id",
      *     @OA\Parameter(
      *         name="hash",
      *         in="path",
-     *         description="Hash ID associated with the pages",
+     *         description="Hash ID associado ao usuário",
      *         required=true,
      *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of pages",
+     *         description="Lista das Páginas",
      *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Page"))
      *     ),
      *     @OA\Response(
@@ -41,12 +41,12 @@ class PageController extends Controller
      */
     public function index($hash)
     {
-        $pages = Page::where('hash_id', $hash)->get();
+        $validatedHash = filter_var($hash, FILTER_SANITIZE_STRING);
+        $pages = Page::where('hash_id', $validatedHash)->get();
 
-        return response()->json([
-            $pages
-        ]);
+        return response()->json($pages);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -54,29 +54,32 @@ class PageController extends Controller
      * @OA\Post(
      *     path="/api/page/novo",
      *     tags={"Pages"},
-     *     summary="Create a new page",
-     *     description="Store a new page with images and description",
-     *     security={{"sanctum": {}}},
+     *     summary="Cria uma nova página",
+     *     description="Salva uma nova página do usuário",
+     *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"img_01", "img_02", "img_03", "descricao"},
-     *             @OA\Property(property="img_01", type="string", format="binary"),
-     *             @OA\Property(property="img_02", type="string", format="binary"),
-     *             @OA\Property(property="img_03", type="string", format="binary"),
-     *             @OA\Property(property="descricao", type="string", example="Descrição da página")
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *              required={"img_01", "img_02", "img_03", "descricao"},
+     *              @OA\Property(property="img_01", type="string", format="binary"),
+     *              @OA\Property(property="img_02", type="string", format="binary"),
+     *              @OA\Property(property="img_03", type="string", format="binary"),
+     *              @OA\Property(property="descricao", type="string", example="Descrição da página")
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Page created successfully",
+     *         description="Página criada com sucesso",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Fotos enviadas com sucesso!"),
      *             @OA\Property(property="path01", type="string", example="https://example.com/foto1.jpg"),
      *             @OA\Property(property="path02", type="string", example="https://example.com/foto2.jpg"),
      *             @OA\Property(property="path03", type="string", example="https://example.com/foto3.jpg"),
      *             @OA\Property(property="page_id", type="integer", example=1),
-     *             @OA\Property(property="hash_id", type="string", example="some_hash")
+     *             @OA\Property(property="hash_id", type="string", example="4243242erwr")
      *         )
      *     ),
      *     @OA\Response(
@@ -101,9 +104,9 @@ class PageController extends Controller
         $path03 = $request->file('img_03')->store('fotos', 'public');
 
         $page = Page::create([
-            'img_01' => $path01,
-            'img_02' => $path02,
-            'img_03' => $path03,
+            'img_01' => 'storage/' . $path01,
+            'img_02' => 'storage/' . $path02,
+            'img_03' => 'storage/' . $path03,
             'descricao' => $request->descricao,
             'user_id' => $user->id,
             'hash_id' => $user->hash
@@ -122,39 +125,42 @@ class PageController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @OA\Put(
+     * @OA\Post(
      *     path="/api/page/{id}",
      *     tags={"Pages"},
-     *     summary="Update a page",
-     *     description="Update an existing page by ID",
-     *     security={{"sanctum": {}}},
+     *     summary="Atualiza a página",
+     *     description="Atualiza uma página com o id",
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of the page to be updated",
+     *         description="ID da página a ser atualizada",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"img_01", "img_02", "img_03", "descricao"},
-     *             @OA\Property(property="img_01", type="string", format="binary"),
-     *             @OA\Property(property="img_02", type="string", format="binary"),
-     *             @OA\Property(property="img_03", type="string", format="binary"),
-     *             @OA\Property(property="descricao", type="string", example="Updated description")
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *              required={"img_01", "img_02", "img_03", "descricao"},
+     *              @OA\Property(property="img_01", type="string", format="binary"),
+     *              @OA\Property(property="img_02", type="string", format="binary"),
+     *              @OA\Property(property="img_03", type="string", format="binary"),
+     *              @OA\Property(property="descricao", type="string", example="Nesse fizemos nossa primeira ...")
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Page updated successfully",
+     *         description="Página atualizada com sucesso",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Page updated successfully"),
+     *             @OA\Property(property="message", type="string", example="Página atualizada com sucesso"),
      *             @OA\Property(property="path01", type="string", example="https://example.com/foto1.jpg"),
      *             @OA\Property(property="path02", type="string", example="https://example.com/foto2.jpg"),
      *             @OA\Property(property="path03", type="string", example="https://example.com/foto3.jpg"),
      *             @OA\Property(property="page_id", type="integer", example=1),
-     *             @OA\Property(property="hash_id", type="string", example="some_hash")
+     *             @OA\Property(property="hash_id", type="string", example="42523425234")
      *         )
      *     ),
      *     @OA\Response(
@@ -165,57 +171,66 @@ class PageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $page = Page::findOrFail($id);
+        $user = auth()->user();
+        $page = Page::where('id', $id)->where('user_id', $user->id)->first();
+
+        if (!$page) {
+            return response()->json(['message' => 'Página não encontrada ou não pertence a você'], 403);
+        }
 
         $request->validate([
-            'img_01' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'img_02' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'img_03' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'img_01' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'img_02' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'img_03' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'descricao' => 'required|string|min:6|max:80',
         ]);
 
-        $path01 = $request->file('img_01')->store('fotos', 'public');
-        $path02 = $request->file('img_02')->store('fotos', 'public');
-        $path03 = $request->file('img_03')->store('fotos', 'public');
+        if ($request->hasFile('img_01')) {
+            $path01 = $request->file('img_01')->store('fotos', 'public');
+            $page->img_01 = 'storage/' . $path01;
+        }
 
-        $page->update([
-            'img_01' => $path01,
-            'img_02' => $path02,
-            'img_03' => $path03,
-            'descricao' => $request->descricao,
-        ]);
+        if ($request->hasFile('img_02')) {
+            $path02 = $request->file('img_02')->store('fotos', 'public');
+            $page->img_02 = 'storage/' . $path02;
+        }
+
+        if ($request->hasFile('img_03')) {
+            $path03 = $request->file('img_03')->store('fotos', 'public');
+            $page->img_03 = 'storage/' . $path03;
+        }
+
+        $page->descricao = $request->descricao;
+        $page->save();
 
         return response()->json([
-            'message' => 'Page updated successfully',
-            'path01' => asset('storage/' . $path01),
-            'path02' => asset('storage/' . $path02),
-            'path03' => asset('storage/' . $path03),
-            'page_id' => $page->id,
-            'hash_id' => $page->hash_id
+            'message' => 'Página atualizada com sucesso',
+            'page' => $page
         ], 200);
     }
+
 
     /**
      * Remove the specified resource from storage.
      *
      * @OA\Delete(
-     *     path="/page/{id}",
+     *     path="/api/page/{id}",
      *     tags={"Pages"},
-     *     summary="Delete a page",
-     *     description="Delete an existing page by ID",
-     *     security={{"sanctum": {}}},
+     *     summary="Deleta página",
+     *     description="Deleta página a partir do id",
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of the page to be deleted",
+     *         description="ID da página para ser deletada",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Page deleted successfully",
+     *         description="Página deletada com sucesso",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Page deleted successfully")
+     *             @OA\Property(property="message", type="string", example="Página deletada com sucesso")
      *         )
      *     ),
      *     @OA\Response(
@@ -226,11 +241,16 @@ class PageController extends Controller
      */
     public function destroy($id)
     {
-        $page = Page::findOrFail($id);
+        $user = auth()->user();
+        $page = Page::where('id', $id)->where('user_id', $user->id)->first();
+
+        if (!$page) {
+            return response()->json(['message' => 'Página não encontrada ou não pertence a você'], 403);
+        }
+
         $page->delete();
 
-        return response()->json([
-            'message' => 'Page deleted successfully'
-        ], 200);
+        return response()->json(['message' => 'Página deletada com sucesso']);
     }
+
 }

@@ -16,6 +16,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);  // Deslogar usuário
 
     Route::post('/page/novo', [PageController::class, 'store']);  // Criar nova página
-    Route::put('/pages/{id}', [PageController::class, 'update']);  // Atualizar página
-    Route::delete('/pages/{id}', [PageController::class, 'destroy']);  // Excluir página
+    Route::post('/page/{id}', [PageController::class, 'update']);  // Atualizar página
+    Route::delete('/page/{id}', [PageController::class, 'destroy']);  // Excluir página
 });

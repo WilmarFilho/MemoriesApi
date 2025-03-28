@@ -12,7 +12,14 @@ namespace App\Http\Controllers;
  *      url="http://127.0.0.1:8005",
  *      description="Servidor de Produção"
  * )
+ * @OA\SecurityScheme(
+ *     type="http",
+ *     scheme="bearer",
+ *     securityScheme="bearerAuth",
+ *     bearerFormat="JWT"
+ * )
  */
+
 
 
 abstract class Controller
