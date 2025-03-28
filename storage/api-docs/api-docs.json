@@ -12,6 +12,351 @@
         }
     ],
     "paths": {
-        "/api": {}
-    }
+        "/api": {},
+        "/api/pages/{hash}": {
+            "get": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "Get list of pages by hash",
+                "description": "Retrieve all pages associated with a given hash_id",
+                "operationId": "411e4531cea9dfbd33ca3c07bf886825",
+                "parameters": [
+                    {
+                        "name": "hash",
+                        "in": "path",
+                        "description": "Hash ID associated with the pages",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of pages",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Page"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/api/page/novo": {
+            "post": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "Create a new page",
+                "description": "Store a new page with images and description",
+                "operationId": "ebdecb4dc27cc332514eb6bd5986c5d8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "img_01",
+                                    "img_02",
+                                    "img_03",
+                                    "descricao"
+                                ],
+                                "properties": {
+                                    "img_01": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "img_02": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "img_03": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "descricao": {
+                                        "type": "string",
+                                        "example": "Descrição da página"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Page created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Fotos enviadas com sucesso!"
+                                        },
+                                        "path01": {
+                                            "type": "string",
+                                            "example": "https://example.com/foto1.jpg"
+                                        },
+                                        "path02": {
+                                            "type": "string",
+                                            "example": "https://example.com/foto2.jpg"
+                                        },
+                                        "path03": {
+                                            "type": "string",
+                                            "example": "https://example.com/foto3.jpg"
+                                        },
+                                        "page_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "hash_id": {
+                                            "type": "string",
+                                            "example": "some_hash"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/page/{id}": {
+            "put": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "Update a page",
+                "description": "Update an existing page by ID",
+                "operationId": "305ebd230bd68edf12e5704d3e34fcdc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the page to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "img_01",
+                                    "img_02",
+                                    "img_03",
+                                    "descricao"
+                                ],
+                                "properties": {
+                                    "img_01": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "img_02": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "img_03": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "descricao": {
+                                        "type": "string",
+                                        "example": "Updated description"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Page updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Page updated successfully"
+                                        },
+                                        "path01": {
+                                            "type": "string",
+                                            "example": "https://example.com/foto1.jpg"
+                                        },
+                                        "path02": {
+                                            "type": "string",
+                                            "example": "https://example.com/foto2.jpg"
+                                        },
+                                        "path03": {
+                                            "type": "string",
+                                            "example": "https://example.com/foto3.jpg"
+                                        },
+                                        "page_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "hash_id": {
+                                            "type": "string",
+                                            "example": "some_hash"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Page not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/page/{id}": {
+            "delete": {
+                "tags": [
+                    "Pages"
+                ],
+                "summary": "Delete a page",
+                "description": "Delete an existing page by ID",
+                "operationId": "4ce5d18580e6f96a806dc755bf4f8a75",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the page to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Page deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Page deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Page not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Page": {
+                "title": "Page",
+                "description": "Modelo de uma Page",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "img_01": {
+                        "type": "string",
+                        "example": "https://example.com/img_01.jpg"
+                    },
+                    "img_02": {
+                        "type": "string",
+                        "example": "https://example.com/img_02.jpg"
+                    },
+                    "img_03": {
+                        "type": "string",
+                        "example": "https://example.com/img_03.jpg"
+                    },
+                    "descricao": {
+                        "type": "string",
+                        "example": "Declaração de amor sobre o dia que casamos ..."
+                    },
+                    "hash_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "User",
+                "description": "Modelo de um User",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Daniel Alves"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "daniel@gmail.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "daniel123456"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Pages",
+            "description": "Endpoints for managing pages"
+        }
+    ]
 }
