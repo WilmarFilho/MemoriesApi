@@ -96,7 +96,7 @@ class PageController extends Controller
             'img_01' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'img_02' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'img_03' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'descricao' => 'required|string|min:6|max:80',
+            'descricao' => 'required|string|min:15|max:200',
         ]);
 
         $path01 = $request->file('img_01')->store('fotos', 'public');

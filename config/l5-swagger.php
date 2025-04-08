@@ -6,7 +6,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'Minha API - Swagger UI',
+                'title' => 'Minha API - Memories',
             ],
 
             'routes' => [
